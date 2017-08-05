@@ -7,6 +7,8 @@ permalink: about
 ---
 
 My name is Michele [ˈmikɛle], I am an engineer, musician and polyglot.
+======================================================================
+
 
 These are my notes about IT.
 
