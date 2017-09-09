@@ -5,23 +5,14 @@ layout: default
 <div class="home">
   {{ content }}
 
-  {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
 
   <!-- <h1 class="page-heading">Posts</h1> -->
 
   {% for post in site.posts limit:5 %}
-    <span class="post-meta">{{ post.date | date: date_format }} 
-      {% for category in post.categories %}
-        {{category}}
-      {% endfor %}
-      {% for tag in post.tags %}
-        #{{tag}}
-      {% endfor %}
-
-    </span>
+  {% include meta_for_post.html %}
     <article>
       <h1>
-        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | markdownify }}</a>
       </h1>
       {{ post.content }}
     </article>
@@ -34,10 +25,9 @@ layout: default
     
     {% for post in site.posts offset:5 %}
       <li>
-        <span class="post-meta">{{ post.date | date: date_format }}</span>
-
+        {% include meta_for_post.html %}
         <h3>
-          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | markdownify }}</a>
         </h3>
       </li>
     {% endfor %}

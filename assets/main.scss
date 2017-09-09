@@ -3,6 +3,10 @@
 
 @import "{{ site.theme }}";
 
-h1,  .post-link {
+h1,  .post-link, h1 code, .post-link code {
     font-size: 32px;
+}
+
+code {
+    background-color: transparent
 }

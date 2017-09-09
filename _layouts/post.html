@@ -1,16 +1,17 @@
 ---
 layout: default
 ---
+{% include meta_for_post.html %}
+
 <article>
 <div id="post">
-
 {% if page.title %}
-<a class="post-link" href="{{ root_url }}{{ page.url }}">{{ page.title }}</a>
+<a class="post-link" href="{{ root_url }}{{ page.url }}">{{ page.title | markdownify }}</a>
 {% endif %}
 {% if post.title %}
-<a class="post-link" href="{{ root_url }}{{ post.url }}">{{ post.title }}</a>
-
+<a class="post-link" href="{{ root_url }}{{ post.url }}">{{ post.title | markdownify }}</a>
 {% endif %}
+
 {{ content }}
 </div>
 </article>
