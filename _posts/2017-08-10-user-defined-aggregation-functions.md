@@ -5,8 +5,6 @@ date:   2017-08-12 09:18:05 +0200
 categories: spark UDAF scala
 ---
 
-# User-Defined Aggregation Functions
-
 As I’m learning Spark (and Scala) some of the topics are a little bit too difficult for me.
 I’m talking about the User-Defined Aggregation Functions, for example, which are treated in Chapter 5 of the *Spark: The definitive guide, 1st Edition* by **PUT HERE THE AUTHORS**.
 I find the example in the book a bit _meagre_. It doesn't explain what's going on, so I decided to have a better look at those. What I wrote here is what I learned, the way I understood it. Woudl you find any mistake, please ping me on twitter, or do a pull request on this same blog.

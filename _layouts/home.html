@@ -1,0 +1,38 @@
+---
+layout: default
+---
+
+<div class="home">
+  {{ content }}
+
+
+  <!-- <h1 class="page-heading">Posts</h1> -->
+
+  {% for post in site.posts limit:5 %}
+  {% include meta_for_post.html %}
+    <article>
+      <h1>
+        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | markdownify }}</a>
+      </h1>
+      {{ post.content }}
+    </article>
+    <hr/>
+    <br/>
+  {% endfor %}
+
+  <h2>Older posts</h2>
+  <ul class="post-list">
+    
+    {% for post in site.posts offset:5 %}
+      <li>
+        {% include meta_for_post.html %}
+        <h3>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | markdownify }}</a>
+        </h3>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+
+</div>
