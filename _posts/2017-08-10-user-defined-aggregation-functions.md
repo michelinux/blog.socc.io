@@ -6,7 +6,7 @@ categories: spark UDAF scala
 ---
 
 As I’m learning Spark (and Scala) some of the topics are a little bit too difficult for me.
-I’m talking about the User-Defined Aggregation Functions, for example, which are treated in Chapter 5 of the *Spark: The definitive guide, 1st Edition* by **PUT HERE THE AUTHORS**.
+One of them is the **User-Defined Aggregation Functions**, a topic discussed in Chapter 5 of the *Spark: The definitive guide, 1st Edition* by by Bill Chambers and Matei Zaharia (btw, I great book that I highly recommend).
 I find the example in the book a bit _meagre_. It doesn't explain what's going on, so I decided to have a better look at those. What I wrote here is what I learned, the way I understood it. Woudl you find any mistake, please ping me on twitter, or do a pull request on this same blog.
 
 Let's say that you want to calculate the percentile of a column. Just to give you an example, if you had a table with all the income for each USA citizen plus some other data, you could use it to calculate:
@@ -19,7 +19,7 @@ Let's say that you want to calculate the percentile of a column. Just to give yo
 
 And so on.
 
-We are going to use the data provided with the *Spark: The Definitive Guide, 1st Edition* which are available (**here|pu t a link here**).
+We are going to use the data provided with the *Spark: The Definitive Guide, 1st Edition* which are [available on GitHub](https://github.com/databricks/Spark-The-Definitive-Guide).
 
 ## Easy things first. Returning a Random Int
 
@@ -56,7 +56,6 @@ The first things to implement are `deterministic`, which tells you whether you w
 
 The second easy one is the `dataType`, which is the Spark type we are returning.
 ```scala
-
   override def dataType: DataType = IntegerType
 
   override def deterministic: Boolean = False
@@ -71,20 +70,23 @@ The `inputSchema` method has to return a `StructType` that *represents data type
 StructType(StructField(Ticket Price,IntegerType,true), StructField(Extra Charges,IntegerType,true))
 ```
 
-The `StructType.apply` method actually requires a List (***CHECK THIS***), and the name of the column needs to be passed as a `String`. So you would get
+The `StructType.apply` method actually requires a `Seq` or an `Array`, and the name of the column needs to be passed as a `String`. So you would get
 
 ```scala
-StructType(StructField("Ticket Price",IntegerType,true) :: StructField("Extra Charges",IntegerType,true) :: Nil)
+StructType(
+  StructField("Ticket Price",IntegerType,true) :: 
+  StructField("Extra Charges",IntegerType,true) :: 
+  Nil)
 ```
 
-In the case of the `RandomAgg` UDAF let's say that we want to operate on one column, holding an `int`. Let's use a slightly different trick, starting from a *virgin* `DataFrame`:
+In the case of the `RandomAgg` UDAF let's say that we want to operate on one column, holding an `int`. Let's use a slightly different trick: we create a *virgin* `DataFrame` with the structure that we have in mind, and use the `.schema` to have a look at how the schema is defined:
 
 ```scala
 > spark.range(1).toDF.withColumn("value", lit(10)).select("value").schema
 StructType(StructField(value,IntegerType,false))
 ```
 
-In this case, because of the `lit(10)` the `nullable` value (which is the third argument of the `StructField` is `False`. In most of the case one would prefer `true`. Or you may just want to omit it, by default it is `true`.
+In this case, because of the `lit(10)` the `nullable` value (which is the third argument of the `StructField` is `False`. In most of the case one would prefer `true`. If omitted, it will be `true` by default.
 
 So in our code it will become
 
@@ -113,7 +115,7 @@ Those three are the methods that `spark` will call to operate on the data. We do
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {}
 ```
 
-Registering and running `randomAgg`
+### Registering and running `randomAgg`
 
 Now our UDAF is looking like:
 
@@ -155,7 +157,7 @@ val trivialDF = spark.range(20).toDF.withColumn("value", lit("michele"))
 trivialDF.groupBy("value").agg(expr("randomAgg(id)")).show
 ```
 
-Everytime you run the `trivialDF.groupBy("mic").agg(expr("randomAgg(id)"))` you'll get a different value.
+Everytime you run the `trivialDF.groupBy("value").agg(expr("randomAgg(id)"))` you'll get a different value.
 
 ## Some real computation: Percentile
 
@@ -206,7 +208,7 @@ When we istantiate the class, we will pass the `observation` that we want to com
 
 ### `inputSchema`
 
-As said for the `RandomAgg` function, the `inputSchema` method has to return a `StructType` that *represents data types of input arguments of this aggregate function*. In this case we do have a real input, which is the data that we want to compare to our `observation`. We assume that those data are some `double`, hence:
+As said for the `RandomAgg` function, the `inputSchema` method has to return a `StructType` that *represents data types of input arguments of this aggregate function*. In this case we do have a real input, which is the data that we want to compare to our `observation`. We assume that those data are `double`, hence:
 
 ```scala
 override def inputSchema: StructType = StructType(StructField("input", DoubleType) :: Nil)
@@ -399,5 +401,6 @@ df.groupBy("Country").agg(expr("Percentile_9_99(UnitPrice)")).show
 
 ## Links
 
-https://spark.apache.org/docs/2.2.0/api/java/org/apache/spark/sql/expressions/UserDefinedAggregateFunction.html
-https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction
+- [User Defined Aggregate Function API](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction)
+- [Spark: The definitive guide, 1st Edition* by by Bill Chambers and Matei Zaharia](http://shop.oreilly.com/product/0636920034957.do)
+
