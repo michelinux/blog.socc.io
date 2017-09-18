@@ -13,23 +13,24 @@ I don't like clutter and I don't like to install too many things on my computer.
 Installing a MySQL to do some quick experiment has never been easier:
 
 ```sh
-docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
+docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
 ```
 
 Quick recap of the options:
 
-* `-e      ` Set environment variables
-* `-d      ` Run container in background
-* `--name  `Assign a name to the container
+* `-e` Set environment variables
+* `-d` Run container in background
+* `--name` Assign a name to the container
+* `-p` Let the external world connect to the container. By default containers cannot be reached from the external and `3306` is the default port of MySQL.
 
-This will download and start the *latest* version of the image `mysql` with `"password"` set as `root` password. This container is named `some-mysql`. You can verify with:
+When running this command you will download and start the *latest* version of the image `mysql` with `"password"` set as `root` password. You will be able to connect to the container from the external world via the port `3306`. The container is named `some-mysql`. You can verify with:
 ```sh
 docker ps
 ```
 
 ```
-CONTAINER ID  IMAGE         COMMAND                 PORTS        NAMES
-c0130911bc99  mysql:latest  "docker-entrypoint..."  3306/tcp     some-mysql
+CONTAINER ID  IMAGE         COMMAND                 PORTS                      NAMES
+a335b0d1a4c3  mysql:latest  "docker-entrypoint..."  0.0.0.0:3306->3306/tcp     some-mysql
 ```
 
 Now one may want to create a get inside the database and create a simple table.
@@ -75,9 +76,10 @@ Your tables and data will still be there.
 
 I find really amazing how easy this kind of setup has become compared to my early days in IT.
 
+
 ##References
 
-https://docs.docker.com/docker-for-mac/
+[https://docs.docker.com/docker-for-mac/](https://docs.docker.com/docker-for-mac/)
 
-https://store.docker.com/images/mysql/ from which I shamelessly ripped off the examples in this page.
+[https://store.docker.com/images/mysql/](https://store.docker.com/images/mysql/) from which I shamelessly ripped off the examples in this page.
 
