@@ -6,8 +6,6 @@ categories: docker macOS
 tags: docker macOS mac mysql
 ---
 
-#Run MySQL on Mac with Docker
-
 I don't like clutter and I don't like to install too many things on my computer. I am confident that Docker can save me. Should you still have to install Docker, have a quick look at https://docs.docker.com/docker-for-mac/install/. 
 
 Installing a MySQL to do some quick experiment has never been easier:
