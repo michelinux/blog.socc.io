@@ -1,12 +1,12 @@
 ---
 layout: post
 title:  "Install Atlassian Confluence on a Mac with Docker"
-date:   2017-10-23 08:22:00 +0200
+date:   2018-01-29 08:22:00 +0200
 categories: docker macOS confluence
 tags: collect_list collect_set optimization spark groupby dataframe
 ---
 
-To complete my migration from a Linux notebook to a Mac, I am finally moving my Confluence installation to my MacBook Pro. (I know, it's a bit overkill to use Confluence just for my personal notes, but I really like it.)
+To complete my migration from a Linux notebook to a Mac, I am finally moving my [Confluence](https://www.atlassian.com/software/confluence) installation to my MacBook Pro. (I know, it's a bit overkill to use Confluence just for my personal notes, but I really like it.)
 
 As I want to keep my machine as clean as possible, I have used Docker for the installation. And this time I also gave a try to Kitematic, the new *beta* UI to handle the containers, by Docker.
 
@@ -14,7 +14,8 @@ As I want to keep my machine as clean as possible, I have used Docker for the in
 
 Basically:
 
-* Kitematic
+* [Docker](https://www.docker.com/community-edition)
+* [Kitematic](https://kitematic.com/)
 * The MySQL JDBC Driver (more on this later)
 
 And from within Kitematic
@@ -23,11 +24,13 @@ And from within Kitematic
 
 Using Kitematic, I have downloaded the **confluence-server** official image. I have configured to redirect the ports as `localhost:8090` and `localhost:8091`. It's just simpler to remember than the original redirect proposed by Docker. After an extreme effort of imagination, I have called this container ***confluence-server***.
 
-I have also created a new instance of mysql. (I wrote before about [mysql on docker on a Mac](% post_url 2017-09-14-Run-MySQL-on-Mac-with-Docker %).) I have called it **mysql-for-confluence**. Just remember to set the password by adding the variable `MYSQL_ROOT_PASSWORD`. Choose a good password. 
+I have also created a new instance of mysql. (I wrote before about [mysql on docker on a Mac](% post_url 2017-09-14-Run-MySQL-on-Mac-with-Docker %).) I have called it ***mysql-for-confluence***. Just remember to set the password by adding the variable `MYSQL_ROOT_PASSWORD`. Choose a good password. 
 
-I have then updated the configuration of the *confluence-server* to have the **mysql-for-confluence** as dependency. You will find this setting in the networks tab.
+I have then updated the configuration of the *confluence-server* to have the *mysql-for-confluence* as dependency. You will find this setting in the networks tab.
 
-Just a personal note. Kitematic is good enough to hide where those settings are stored. I am no expert of Docker, and here I am using it just like another application.
+![2018-01-28-confluence-mysql-container-dependency-network](/images/2018-01-28-confluence-mysql-container-dependency-network.png)
+
+Just a personal note. Kitematic is good enough to hide where those settings are stored. I am no expert of Docker, and here I am using it just like another application. Just another note: start Docker before starting Kitematic. (Try the other way around and you will understand.)
 
 I was hoping that Kitematic would automatically start the *mysql-for-confluence* container whenever you start the *confluence-server* one: it's just print a very fast error, lasting on screen for a fraction of a seconds, telling you to start the dependencies first. So first start the *mysql-for-confluence* and then the *confluence-server*.
 
@@ -35,13 +38,13 @@ However the main advantage of the dependency is that now you can see the *mysql-
 
 ## The MySQL JDBC driver for Confluence
 
-Due to licensing problems, you have to manually download the MySQL JDBC driver. I could have used the PostgreSQL as [Confluence already include the PostgreSQL Driver](https://confluence.atlassian.com/doc/database-jdbc-drivers-171742.html). But I already started writing this notes saying I would have used MySQL, and I am lazy. So I stayed on MySQL, [downloaded the MySQL JDBC driver](https://dev.mysql.com/downloads/connector/j/), and copied it to the *confluence-server* container.
+Due to MySQL JDBC Driver licensing problems (about that: did you get your Confluence license from Atlassian?), you have to manually download the MySQL JDBC driver. I could have used the PostgreSQL as [Confluence already include the PostgreSQL Driver](https://confluence.atlassian.com/doc/database-jdbc-drivers-171742.html). But I already started writing this notes saying I would have used MySQL, and I am lazy. So I stayed on MySQL, [downloaded the MySQL JDBC driver](https://dev.mysql.com/downloads/connector/j/), and copied it to the *confluence-server* container.
 
 ```bash
 docker cp mysql-connector-java-5.1.45-bin.jar confluence-server:/opt/atlassian/confluence/confluence/WEB-INF/lib
 ```
 
-And restart the `confluence-server` container.
+And restart the *confluence-server* container.
 
 I did try to restart just Confluence, but it didn't work. I got a `$CATALINA_PID was set but the specified file does not exist. Is Tomcat running? Stop aborted` and I gave up.
 
